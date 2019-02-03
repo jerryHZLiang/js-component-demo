@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>tab</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="tabs xxx">
+        <ol class="tabs-bar">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ol>
+        <ol class="tabs-content">
+            <li>content 1</li>
+            <li>content 2</li>
+            <li>content 3</li>
+        </ol>
+    </div>
+    <div class="tabs xxx">
+        <ol class="tabs-bar">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ol>
+        <ol class="tabs-content">
+            <li>content 1</li>
+            <li>content 2</li>
+            <li>content 3</li>
+        </ol>
+    </div>
+    <script>
+    class Tabs{
+        constructor(selector){
+            this.elements = $(selector)
+            this.init()
+            this.bindEvents()
+        }
+        init(){
+            this.elements.each(function (index,element) {
+            $(element).children('.tabs-bar').children('li').eq(0).addClass('active')
+            $(element).children('.tabs-content').children('li').eq(0).addClass('active')
+            })
+        }
+        bindEvents(){
+            this.elements.on('click','.tabs-bar > li',function(e){
+            var $li=$(e.currentTarget)
+            $li.addClass('active').siblings().removeClass('active')
+            var index = $li.index()
+            var $content = $li.closest('.tabs').find('.tabs-content>li').eq(index)
+            $content.addClass('active').siblings().removeClass('active')
+            })
+        }
+    }
+    var tabs = new Tabs('.xxx')
+    </script>
+</body>
+</html>
