@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sticky</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #topbar{
+            background: green;
+            height: 60px;
+            color: white;
+            text-align: center;
+        }
+        .sticky{
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        main{
+            background: #ddd;
+            height: 1000px;
+        }
+        .wrapper{
+            height: 60px;
+        }
+        #topbar.sticky{
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div id="topbar">
+        topbar
+    </div>
+
+    <main>
+        主要内容
+        <p>段落1</p>
+        <p>段落2</p>
+        <p>段落3</p>
+        <p>段落4</p>
+        <p>段落5</p>
+        <p>段落6</p>
+        <p>段落7</p>
+        <p>段落8</p>
+        <p>段落9</p>
+        <p>段落10</p>
+        <button>黏住的按钮</button>
+        <p>段落11</p>
+        <p>段落12</p>
+    </main>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+    class Sticky{
+        constructor(selecter,n){
+            this.elements=$(selecter)
+            this.offset= n || 0
+            this.addPlaceHolder()
+            this.catchOffset()
+            this.listenToScroll()
+        }
+        addPlaceHolder(){
+            this.elements.each((index,element)=>{
+                var $wrapper=$('<div class="wrapper"></div>')
+                 $(element).wrap($wrapper)
+                 $(element).parent().height($(element).outerHeight())
+            })
+  
+        }
+        catchOffset(){
+            this.offsets=[]
+            this.elements.each((index,element)=>{
+                this.offsets[index] = $(element).offset();
+            })
+        }
+        listenToScroll(){
+            $(window).on('scroll',()=>{
+                var scrollY= window.scrollY
+                this.elements.each((index,element)=>{
+                    var $element = $(element);
+                    if(scrollY+this.offset >  this.offsets[index].top){
+                        $element.addClass('sticky')
+                        .css({top: this.offset})
+                    }else{
+                        $element.removeClass('sticky')
+                    }
+                })
+            })
+        }
+    }
+    new Sticky('#topbar')
+    new Sticky('button',60)
+    // var sticky=new Sticky(selecter,n)
+    // $(window).on('scroll',function(){
+    //     var scrollY=window.scrollY
+    //     var topbarOffset=$('#topbar').offset()
+    //     var offsetButton = $('button').offset()
+    //     if(scrollY + 0 >topbarOffset){
+    //         $('#topbar').addClass('sticky')
+    //     }else{
+    //         $('#topbar').removeClass('sticky')
+    //     }
+
+    //     if(scrollY + 60>offsetButton.top){
+    //         $('button').addClass('sticky')
+    //     }else{
+    //         $('button').removeClass('sticky')
+    //     }
+
+    //})
+    </script>
+</body>
+</html>
