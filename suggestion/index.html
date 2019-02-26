@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    .HzlSuggestion{
+        position: relative;
+        border: 1px solid red;
+        display: inline-block;
+    }
+    .HzlSuggestion-loading{
+        position: absolute;
+        top: 100%;
+        left:0;
+        display: none;
+    }
+
+    .HzlSuggestion.loading .HzlSuggestion-loading{
+        display: block;
+    }
+    .HzlSuggestion-list{
+        position: absolute;
+        border: 1px solid green;
+        top: 100%;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+    }
+    .HzlSuggestion.loading .HzlSuggestion-list{
+        display: none;
+    }
+
+    .HzlSuggestion-empty{
+        display: none;
+    }
+    .HzlSuggestion.empty .HzlSuggestion-empty{
+        display: block;
+    }
+
+    </style>
+</head>
+<body>
+    <input type="text">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/underscore.js/1.9.1/underscore-min.js"></script>
+    <script>
+    class Suggestion{
+        constructor(options){
+            this.options=options;
+            this.$input=$(options.input);
+            this.$input.wrap('<div class="HzlSuggestion"></div>');
+            this.$wrapper=this.$input.parent();
+            this.$ol = $('<ol class="HzlSuggestion-list"></ol>');
+            this.$input.after(this.$ol);
+            this.$loading=$('<div class="HzlSuggestion-loading"></div>');
+            this.$loading.html(this.options.loadingTemplate);
+
+            this.$empty = $('<div class="HzlSuggestion-empty"></divc>')
+            this.$empty.html(this.options.emptyTemplate);
+            this.$ol.after(this.$loading);
+            this.$ol.after(this.$empty);
+            this.bindEvents();
+        }
+        bindEvents(){
+            // let timeId;
+            let lazySearch = _.debounce(this.search.bind(this),300);
+            this.$input.on('input', (e)=> {
+                lazySearch(e.currentTarget.value);
+                // if(timeId) clearTimeout(timeId);
+                // timeId = setTimeout(()=>{
+                //     this.search(e.currentTarget.value)
+                // },1000);
+                // timeId = undefined;
+            })
+        }
+        search(keyword){
+            this.$wrapper.addClass('loading');
+            this.options.search(keyword,(array)=>{
+                this.$ol.empty();
+                this.$wrapper.removeClass('loading empty');
+
+                if(!array || array.length===0){
+                    this.$wrapper.addClass('empty');
+                    return
+                }
+                array.forEach(text=>{
+                    this.$ol.append($('<li></li>').text(text))
+                });
+            });
+        }
+    }
+    var s=new Suggestion({
+        input:'input',
+
+        search:function(text,callback){
+            if(text==='0'){
+                return callback([]);
+            }
+            let array=[];
+            for(let i=0;i<5;i++){
+                var n =parseInt(Math.random()*100,10);
+                array.push(text+n);
+            }
+           setTimeout(()=>callback(array),300) ;
+        },
+        loadingTemplate:'加载中',
+        emptyTemplate: 'Not found'
+    })
+    </script>
+</body>
+</html>
